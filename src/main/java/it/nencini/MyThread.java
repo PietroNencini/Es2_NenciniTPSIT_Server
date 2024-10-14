@@ -17,24 +17,42 @@ public class MyThread extends Thread{
         this.s = s;
     }
 
-    public void run() {                 // Metodo run() contiene il codice asoncrono di questo thread
+    public void run() {    
+                     // Metodo run() contiene il codice asoncrono di questo thread
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.s.getInputStream()));
             DataOutputStream out = new DataOutputStream(this.s.getOutputStream());
+            int received_choice;
+            do {
+                String received_string = in.readLine();
+                received_choice = Integer.parseInt(in.readLine());
 
-            String received_data;
-            while(!((received_data = in.readLine()).equals("!"))) {
+                System.out.println(received_string);
+                System.out.println(received_choice);
+                String editedString = editString(received_string, received_choice);
                 
-                System.out.println("Messaggio ricevuto: " + received_data);
-                String upperString = received_data.toUpperCase();
-                out.writeBytes(upperString + '\n');
+                out.writeBytes(editedString + '\n');
                 System.out.println("** AGGIORNATO E INVIATO LA STRINGA MODIFICATA**");
-            
-            }
+            } while(received_choice >= 1 || received_choice <= 4);
         } catch (IOException e) {
             System.out.println("ERRORE NELLA COMUNICAZIONE");
         }
     }
 
+    private String editString(String s, int c) {
+        switch(c) {
+            case 1:
+                return s.toUpperCase();
+            case 2:
+                return s.toLowerCase();
+            case 3:
+                return new StringBuilder(s).reverse().toString();
+            case 4:
+                return String.valueOf(s.length());
+            default:
+                System.out.println("Scelta non valida");
+                return null;
+        }
+    }
 
 }
